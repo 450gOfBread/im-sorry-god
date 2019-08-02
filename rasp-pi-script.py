@@ -70,4 +70,49 @@ def messages():
 	
 	uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
 	
-	advertise_service(socket, "raspberrypi", service_id = uuid, 
+	advertise_service(socket, "raspberrypi", service_id = uuid, service_classes = [uuid, SERIAL_PORT_CLASS], profiles = [SERIAL_PORT_PROFILE])
+    
+    client,address = socket.accept()
+
+    print("accepted")
+    yellow.off()
+    blue.on()
+    
+
+    running = True
+    
+    while running:
+        data = client.recv(1024)
+
+        data = str(data)[2:len(str(data)) - 1]
+        print(data)
+
+        if data == "quit":
+            running = False
+            green.off()
+            yellow.off()
+            red.off()
+            
+        elif data == "shutdown":
+            running = False
+            
+        else:
+            command(data)
+
+
+    client.close()
+    socket.close()
+
+    blue.off()
+    
+    connected = False
+    
+
+
+while True:
+    red.on()
+    but.wait_for_press()
+    try:
+        messages()
+    except:
+        print("error")
